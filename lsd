@@ -3,8 +3,8 @@
 # Performs 'ls', but exclusively on directories.
 # Takes all the usual ls flags.
 #
-# Written by Alloni Kramer (alloni@pineal.org)
-# Tweaked by Nathan Winant (www.exegetic.net)
+# Written by Alloni Kramer (allonikramer@gmail.com)
+# Tweaked by Nathan Winant (www.exegetic.net | nw@exegetic.net)
 
 
 $opt = "";
