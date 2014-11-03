@@ -12,10 +12,10 @@ ARGS="${@}"
 CHROME_ALT_USER=$DEFAULT_CHROME_ALT_USER
 
 if [[ `uname` == 'Darwin' ]] ; then
-  BASE_USER_DATA_DIR="~/Library/Application\ Support/Google/ChromeAltAccounts"
+  BASE_USER_DATA_DIR="$HOME/Library/Application\ Support/Google/ChromeAltAccounts"
   CHROME_COMMAND="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 else
-  BASE_USER_DATA_DIR=~/.chrome-alt-accounts
+  BASE_USER_DATA_DIR="$HOME/.chrome-alt-accounts"
   CHROME_COMMAND=chrome
 fi
 
