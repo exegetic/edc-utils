@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Launches a parallel Chrome instance w/ a different user profile, suppressing verbosity.
+#
+# Written by Nathan Winant: www.exegetic.net, nw@exegetic.net
+#
+# See also:
+#   http://www.chromium.org/user-experience/user-data-directory
+#   http://peter.sh/experiments/chromium-command-line-switches/
+
+ARGS="${@}"
+CHROME_ALT_USER=$DEFAULT_CHROME_ALT_USER
+
+if [[ `uname` == 'Darwin' ]] ; then
+  BASE_USER_DATA_DIR="~/Library/Application\ Support/Google/ChromeAltAccounts"
+  CHROME_COMMAND="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+else
+  BASE_USER_DATA_DIR=~/.chrome-alt-accounts
+  CHROME_COMMAND=chrome
+fi
+
+if [[ "$1" =~ ^--user=.* ]] ; then
+  CHROME_ALT_USER=${1:7}
+  ARGS="${@:2}"
+fi
+
+if [ -z "$CHROME_ALT_USER" ] ; then
+  echo "Usage: $0 [--user=CHROME_ALT_USER] [standard Chrome args...]"
+  echo "        * CHROME_ALT_USER may be omitted if the \$DEFAULT_CHROME_ALT_USER"
+  echo "          environment variable has been set."
+  echo "        * User data dir will be retrieved or created at"
+  echo "          $BASE_USER_DATA_DIR/[CHROME_ALT_USER]"
+  echo "        Example:"
+  echo "          $0 --user=dev google.com yahoo.com"
+  exit 1
+fi
+
+USER_DATA_DIR="${BASE_USER_DATA_DIR}"/"${CHROME_ALT_USER}"
+COMMAND_STRING="$CHROME_COMMAND --user-data-dir=${USER_DATA_DIR} $ARGS > /dev/null 2>&1 &"
+echo "Launching Chrome for user profile \"${CHROME_ALT_USER}\""
+eval $COMMAND_STRING
+
