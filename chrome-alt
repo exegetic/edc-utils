@@ -19,7 +19,9 @@ else
   CHROME_COMMAND=chrome
 fi
 
-if [[ "$1" =~ ^--user=.* ]] ; then
+if [ "$1" == "--help" ] ; then
+  CHROME_ALT_USER=
+elif [[ "$1" =~ ^--user=.* ]] ; then
   CHROME_ALT_USER=${1:7}
   ARGS="${@:2}"
 fi
