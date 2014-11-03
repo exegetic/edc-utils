@@ -26,12 +26,18 @@ fi
 
 if [ -z "$CHROME_ALT_USER" ] ; then
   echo "Usage: $0 [--user=CHROME_ALT_USER] [standard Chrome args...]"
+  echo
   echo "        * CHROME_ALT_USER may be omitted if the \$DEFAULT_CHROME_ALT_USER"
   echo "          environment variable has been set."
   echo "        * User data dir will be retrieved or created at"
   echo "          $BASE_USER_DATA_DIR/[CHROME_ALT_USER]"
-  echo "        Example:"
+  echo
+  echo "        Examples:"
+  echo
   echo "          $0 --user=dev google.com yahoo.com"
+  echo
+  echo "          export DEFAULT_CHROME_ALT_USER=dev"
+  echo "          $0 google.com yahoo.com"
   exit 1
 fi
 
