@@ -11,12 +11,12 @@
 ARGS="${@}"
 CHROME_ALT_USER=$DEFAULT_CHROME_ALT_USER
 
-if [[ `uname` == 'Darwin' ]] ; then
+if [[ $(uname) == 'Darwin' ]] ; then
   BASE_USER_DATA_DIR="$HOME/Library/Application\ Support/Google/ChromeAltAccounts"
   CHROME_COMMAND="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 else
-  BASE_USER_DATA_DIR="$HOME/.chrome-alt-accounts"
-  CHROME_COMMAND=chrome
+  BASE_USER_DATA_DIR="$HOME/.config/google-chrome-alt-accounts"
+  CHROME_COMMAND=google-chrome
 fi
 
 if [ "$1" == "--help" ] ; then
@@ -27,7 +27,8 @@ elif [[ "$1" =~ ^--user=.* ]] ; then
 fi
 
 if [ -z "$CHROME_ALT_USER" ] ; then
-  echo "Usage: $0 [--user=CHROME_ALT_USER] [standard Chrome args...]"
+  SCRIPT_NAME=$(basename $0)
+  echo "Usage: ${SCRIPT_NAME} [--user=CHROME_ALT_USER] [standard Chrome args...]"
   echo
   echo "        * CHROME_ALT_USER may be omitted if the \$DEFAULT_CHROME_ALT_USER"
   echo "          environment variable has been set."
@@ -36,10 +37,11 @@ if [ -z "$CHROME_ALT_USER" ] ; then
   echo
   echo "        Examples:"
   echo
-  echo "          $0 --user=dev google.com yahoo.com"
+  echo "          ${SCRIPT_NAME} --user=dev google.com yahoo.com"
   echo
   echo "          export DEFAULT_CHROME_ALT_USER=dev"
-  echo "          $0 google.com yahoo.com"
+  echo "          ${SCRIPT_NAME} google.com yahoo.com"
+  echo
   exit 1
 fi
 
