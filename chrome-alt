@@ -1,12 +1,14 @@
 #!/bin/bash
 #
-# Launches a parallel Chrome instance w/ a different user profile, suppressing verbosity.
+# chrome-alt
+# ==========
+# Launches a parallel Chrome instance with a different user profile.
+# Profiles are just specified as a name (e.g. "dev"), not a full path.
+# A default profile can be set via the $DEFAULT_CHROME_ALT_USER
+# environment variable. Otherwise, it takes all the usual Chrome args.
 #
-# Written by Nathan Winant: www.exegetic.net, nw@exegetic.net
-#
-# See also:
-#   http://www.chromium.org/user-experience/user-data-directory
-#   http://peter.sh/experiments/chromium-command-line-switches/
+# Written by Nathan Winant (www.exegetic.net |  nw@exegetic.net)
+
 
 ARGS="${@}"
 CHROME_ALT_USER=$DEFAULT_CHROME_ALT_USER
@@ -30,9 +32,14 @@ if [ -z "$CHROME_ALT_USER" ] ; then
   SCRIPT_NAME=$(basename $0)
   echo "Usage: ${SCRIPT_NAME} [--user=CHROME_ALT_USER] [standard Chrome args...]"
   echo
-  echo "        * CHROME_ALT_USER may be omitted if the \$DEFAULT_CHROME_ALT_USER"
+  echo "        Launches a parallel Chrome instance with a different user profile."
+  echo "        Profiles are just specified as a name (e.g. \"dev\"), not a full path."
+  echo "        A default profile can be set via the \$DEFAULT_CHROME_ALT_USER"
+  echo "        environment variable. Otherwise, it takes all the usual Chrome args."
+  echo
+  echo "        * CHROME_ALT_USER may only be omitted if the \$DEFAULT_CHROME_ALT_USER"
   echo "          environment variable has been set."
-  echo "        * User data dir will be retrieved or created at"
+  echo "        * All user profiles will be created in/retrieved from"
   echo "          $BASE_USER_DATA_DIR/[CHROME_ALT_USER]"
   echo
   echo "        Examples:"
@@ -41,6 +48,10 @@ if [ -z "$CHROME_ALT_USER" ] ; then
   echo
   echo "          export DEFAULT_CHROME_ALT_USER=dev"
   echo "          ${SCRIPT_NAME} google.com yahoo.com"
+  echo
+  echo "        See also:"
+  echo "          http://www.chromium.org/user-experience/user-data-directory"
+  echo "          http://peter.sh/experiments/chromium-command-line-switches/"
   echo
   exit 1
 fi
