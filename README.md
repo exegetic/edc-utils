@@ -1,7 +1,7 @@
-miscellaneous-shell-scripts
-===========================
+misc-scripts
+============
 
-Just a couple of random shell scripts I've found useful:
+Grab bag of random scripts I've found useful. Currently contains:
 
 * **lsd**: Performs 'ls', but exclusively on directories. 
   Takes all the usual ls flags.
@@ -11,5 +11,5 @@ Just a couple of random shell scripts I've found useful:
   some not-terrible user-data-dir defaults for both OS X &
   Linux.
 
-Also, a few assorted gists: https://gist.github.com/nathanwinant
+Also, a few assorted gists: https://gist.github.com/nwinant
 
