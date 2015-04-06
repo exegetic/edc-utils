@@ -7,7 +7,7 @@
 # A default profile can be set via the $DEFAULT_CHROME_ALT_USER
 # environment variable. Otherwise, it takes all the usual Chrome args.
 #
-# Written by Nathan Winant (www.exegetic.net |  nw@exegetic.net)
+# Written by Nathan Winant (http://exegetic.net | nw@exegetic.net)
 
 
 ARGS="${@}"
