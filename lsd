@@ -4,7 +4,7 @@
 # Takes all the usual ls flags.
 #
 # Written by Alloni Kramer (allonikramer@gmail.com)
-# Tweaked by Nathan Winant (www.exegetic.net | nw@exegetic.net)
+# Tweaked by Nathan Winant (http://exegetic.net | nw@exegetic.net)
 
 
 $opt = "";
