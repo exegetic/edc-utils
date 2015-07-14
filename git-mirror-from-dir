@@ -7,14 +7,30 @@
 #
 # - Nathan Winant (http://exegetic.net | nw@exegetic.net)
 
+
+
+while getopts ...; do
+  ...
+done
+
+
+exit 0
+
+
+#src_dir=$1
+#repo_url=$2
+
+
 # Variables
 script_name=$(basename $0)
 orig_dir=`pwd`
-repo_url=$2
+#repo_url=$2
 repo_dir=target_repo
-src_dir=$1
+#src_dir=$1
 tmp_path=/tmp/${script_name}/$USER-$(date '+%Y%m%d-%H%M%S')
 repo_path=${tmp_path}/${repo_dir}
+
+
 
 # Check args
 if [[ "$#" -ne 2 ]] ; then
@@ -79,6 +95,13 @@ echo "Changes are ready. To review them:"
 echo
 echo "  cd ${repo_path}"
 echo "  git status"
+echo
+echo "Some commands to view diffs:"
+echo
+echo "  git diff --staged"
+echo "  git diff --staged FILENAME"
+echo "  git difftool --staged"
+echo "  git difftool --staged FILENAME"
 echo
 echo "If you like the changes, you may wish to do the following:"
 echo
