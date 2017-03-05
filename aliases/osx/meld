@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+open -W -a Meld --args $@
+
+
