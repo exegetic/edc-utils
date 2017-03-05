@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# git-mirror-from-dir
+#
+# This script clones a git repository, and then updates it to mirror the contents of a directory.
+# It does *not* actually commit or push the changes; final review & approval is left for the user.
+#
+# - Nathan Winant (http://exegetic.net | nw@exegetic.net)
+
+
+
+while getopts ...; do
+  ...
+done
+
+
+exit 0
+
+
+#src_dir=$1
+#repo_url=$2
+
+
+# Variables
+script_name=$(basename $0)
+orig_dir=`pwd`
+#repo_url=$2
+repo_dir=target_repo
+#src_dir=$1
+tmp_path=/tmp/${script_name}/$USER-$(date '+%Y%m%d-%H%M%S')
+repo_path=${tmp_path}/${repo_dir}
+
+
+
+# Check args
+if [[ "$#" -ne 2 ]] ; then
+    echo "Usage: ${script_name} [DIR_TO_MIRROR_FROM] [GIT_REPO_URL_TO_MIRROR_TO]"
+    exit 0
+fi
+
+# Check src directory
+if [ ! -d "$src_dir" ]; then
+    echo "Directory ${src_dir} does not exist. Aborting!"
+    exit 1
+fi
+if [ ! "$(ls -A $src_dir)" ]; then
+    echo "Directory ${src_dir} is empty. Aborting!"
+    exit 1
+fi
+
+# Create a scratch space incorporating our username and the date & time.
+mkdir -p $tmp_path
+cd $tmp_path
+echo Created scratch dir: $(pwd)
+
+# Check scratch dir
+if [ "$(ls -A)" ]; then
+    echo "... Well, this ain't right:"
+    echo
+    ls -la
+    echo
+    echo "Somehow, almost impossibly, this directory is not empty. Aborting!"
+    exit 1
+fi
+
+# Clone git repo
+echo "Cloning ${repo_url}"
+git clone ${repo_url} ${repo_dir}
+
+#echo "Moving the following out of ${repo_dir}:"
+#ls -1da ${repo_dir}/.git* | xargs -n 1 echo "  - "
+mv ${repo_dir}/.git* .
+
+echo "Updating git repo with contents of ${src_dir}"
+cd ${orig_dir}
+rm -rf ${repo_path}
+mkdir ${repo_path}
+cp -rf ${src_dir}/* ${repo_path}
+
+#echo "Magically turning the directory back into a git repo..."
+mv ${tmp_path}/.git* ${repo_path}
+cd ${repo_path}
+
+#echo "Staging all updates and deletes..."
+git add -u
+
+#echo "Staging all new files..."
+git add -A
+
+echo
+
+# Finally, hand control back to the user...
+
+echo "Changes are ready. To review them:"
+echo
+echo "  cd ${repo_path}"
+echo "  git status"
+echo
+echo "Some commands to view diffs:"
+echo
+echo "  git diff --staged"
+echo "  git diff --staged FILENAME"
+echo "  git difftool --staged"
+echo "  git difftool --staged FILENAME"
+echo
+echo "If you like the changes, you may wish to do the following:"
+echo
+echo "  git commit"
+echo "  git push"
+echo "  rm ${tmp_path}"
+echo
+
