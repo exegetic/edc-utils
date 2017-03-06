@@ -1,5 +1,5 @@
-#COLOR CODES
-#----------------
+## Color codes
+## -----------
 
 ATTR_NONE="00"
 ATTR_BOLD="01"
@@ -26,9 +26,13 @@ BG_MAGENTA="45"
 BG_CYAN="46"
 BG_WHITE="47"
 
+## Defaults
+FG_DEFAULT="39"
+BG_DEFAULT="49"
 
-#COMBINATIONS
-#----------------
+
+## Combinations
+## -------------
 
 BLACK="\[\033[0;30m\]"
 RED="\[\033[0;31m\]"
@@ -50,4 +54,16 @@ BOLD_CYAN="\[\033[1;36m\]"
 
 NO_COLOR="\[\033[0m\]"
 
+
+## tput colors
+## -----------
+
+TPUT_BLACK=0
+TPUT_RED=1
+TPUT_GREEN=2
+TPUT_YELLOW=3
+TPUT_BLUE=4
+TPUT_MAGENTA=5
+TPUT_CYAN=6
+TPUT_WHITE=7
 
