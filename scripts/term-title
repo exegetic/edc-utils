@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#set -euo pipefail    # "strict mode": exit on command errors or undefined variables
+
+## Invoked for PROMPT_COMMAND in ~/.bashrc
+##
+## Relies upon $PREVIOUS_COMMAND having been set
+
+#prev_cmd=""
+#TERMNAME=""
+#prev_cmd=$PREVIOUS_COMMAND
+#if [ "$prev_cmd" == "exit" ]; then
+#  prev_cmd="-"
+#fi
+
+name="  "
+
+if [ "$TERMNAME" ]; then
+  name="[ ${TERMNAME} ] $(hostname):"
+fi
+
+if [ "$STY" ]; then
+  #name="[ ${STY#*.} > $(screen -Q title) ${WINDOW} ] $(hostname):"
+  name="[ $(screen -Q title) (#${WINDOW})  <  ${STY#*.} ] $(hostname):"
+fi
+
+#echo -en "${name}$(pwd)        $(date +"%F %T"):    $prev_cmd"
+echo -en "${name}$(pwd)    $(date +"%F %T")"
+
+

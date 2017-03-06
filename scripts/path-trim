@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errors or undefined variables
+
+first_len=1
+last_len=3
+#max_full_len=20
+
+path=$(dirs -0)
+num_slashes=$(echo $path | grep -o '/' | wc -l)
+if [ $num_slashes -gt $(($first_len + $last_len)) ]; then
+  path_start=$(echo $path | cut -d'/' -f-$((${first_len} + 1)))
+  path_end=$(echo $path | rev | cut -d'/' -f-${last_len} | rev)
+  path_mid=${path:$((${#path_start})):$((${#path} - ${#path_start} - ${#path_end}))}
+  path_mid=$(echo $path_mid | sed -r 's|/(.)[^/]*|/\1|g')
+  echo "${path_start}/${path_mid:1:-1}/${path_end}"
+  #path_mid=$(echo $path_mid | sed -r 's|/(..)[^/]*|/\1|g')
+  #echo "${path_start}/{${path_mid:1:-1}}/${path_end}"
+else
+  echo $path
+fi
+
