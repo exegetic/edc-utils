@@ -1,2 +1,8 @@
+##  Local override dirs
+/local
+scripts/local
+
+##  Backup files
 .*.swp
 *~
+
