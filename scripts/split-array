@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errors or undefined variables
+
+##* Usage: {{{SCRIPT_NAME}}} DELIMITER ARRAY
+##* 
+##* Examples:
+##* 
+##*   > {{{SCRIPT_NAME}}} " " foo bar baz
+##*   foo
+##*   bar
+##*   baz
+##* 
+##*   > {{{SCRIPT_NAME}}} : $PATH
+##*   /usr/local/sbin
+##*   /usr/local/bin
+##*   /usr/sbin
+##*   /usr/bin
+##*   /sbin
+##*   /sbin
+##*   /bin
+##*   (etc.)
+##* 
+
+usage() {
+  local doc_line="^##\* "
+  cat ${BASH_SOURCE[0]} | grep -e "${doc_line}" \
+      | sed -e "s/${doc_line}//g" -e "s/{{{SCRIPT_NAME}}}/$(basename "${BASH_SOURCE[0]}")/g"
+  exit 1
+}
+
+## ==== Setup & arg checking =========================================
+
+if [ $# -lt 2 ]; then
+  usage
+  exit 1
+fi
+
+DELIM="${1:-}"
+ARRAY="${@:2}"
+
+oIFS=$IFS;
+IFS=$DELIM;
+tokens=($ARRAY)
+IFS=$oIFS;
+
+for token in "${tokens[@]}" ; do
+  #echo "[$token]"
+  echo "${token}"
+done
+
+exit 0
+
