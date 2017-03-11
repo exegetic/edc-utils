@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail    # "strict mode": exit on command errors or undefined variables
+
+##
+## From https://superuser.com/questions/382616/detecting-currently-active-window
+##
+
+print_usage_and_quit() {
+  echo "Usage: $0 COMMAND"
+  echo
+  echo "  Information:  current-id"
+  echo "                current-name"
+  #echo "                list-ids"
+  #echo "                next-id"
+  #echo "                prev-id"
+  #echo
+  #echo "  Actions:      next"
+  #echo "                prev"
+  echo
+  exit 1
+}
+
+if [ $# -ne 1 ]; then
+  print_usage_and_quit
+fi
+
+CURRENT_ID=$(xprop -root 32x '\t$0' _NET_ACTIVE_WINDOW | cut -f 2)
+CURRENT_NAME=$(xprop -id $CURRENT_ID _NET_WM_NAME)
+
+case "$1" in
+
+  'current-id')
+    echo -n ${CURRENT_ID}
+    exit 0
+    ;;
+
+  'current-name')
+    echo -n ${CURRENT_NAME}
+    exit 0
+    ;;
+
+esac
+
+# xprop -root|grep ^_NET_CLIENT_LIST
+# wmctrl -l
+# wmctrl -a somewindownamesubstring
+# wmctrl -i -a 0x03a00a88
+
+print_usage_and_quit
+
