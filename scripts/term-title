@@ -12,15 +12,15 @@
 #  prev_cmd="-"
 #fi
 
-name="  "
+name=":  "
 
 if [ "$TERMNAME" ]; then
-  name="[ ${TERMNAME} ] $(hostname):"
+  name=":${TERMNAME} ] $(hostname):"
 fi
 
 if [ "$STY" ]; then
   #name="[ ${STY#*.} > $(screen -Q title) ${WINDOW} ] $(hostname):"
-  name="[ $(screen -Q title) (#${WINDOW})  <  ${STY#*.} ] $(hostname):"
+  name=":$(screen -Q title) (#${WINDOW})  <  ${STY#*.}  $(hostname):"
 fi
 
 #echo -en "${name}$(pwd)        $(date +"%F %T"):    $prev_cmd"
