@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errors or undefined variables
+
+#screen -ls
+#  echo "Rename session:                 Windows:  Create: C-a c"
+#  echo "  screen -X sessionname NAME              Prev:   C-a C-a" 
+#  echo "  C-a :sessionname NAME                   List:   C-a \""
+#  echo "                                          Rename: C-a A    screen -X title TITLE"
+
+ESC="Alt-\\"
+
+screen -ls
+
+cat <<EOF
+
+Session:    $ESC R              Reload config
+            $ESC x              Lock screen
+            $ESC ?              Show key bindings
+            $ESC :sessionname   Rename session
+
+Windows:    $ESC "              List all windows & choose one
+            $ESC c              Create
+            $ESC C-a            Switch to most recent window
+            $ESC A              Rename
+            Alt-LEFT/RIGHT       Switch windows
+            $ESC A              Rename window
+            $ESC :kill          Kill window
+
+Splitting:  $ESC S              Split horizontally
+            $ESC |              Split vertically
+            $ESC X              Close this split window region
+            $ESC Q              Close all *other* split windows except this one
+            $ESC TAB            Switch between regions (Also, click on a region to focus)
+
+Resizing:   F2                   Enter resize mode
+            ARROW KEYS           - Resize current region (LEFT/DOWN is smaller, RIGHT/UP is bigger)
+            $ESC F              "Fit": resize current window
+
+Copy mode:  $ESC Esc            Enter scrollback mode (Also, PAGE UP and Ctrl-UP)
+            SPACE                - Start or stop selecting a region to copy
+            y                    - Mark from start of line
+            Y                    - Mark one whole line
+            W                    - Mark one whole word
+            /,?                  - Forward,reverse search
+            c,C                  - Set left,right column for copying a column of text
+            x                    - Exchange the first mark with the current cursor position
+            a                    - Append to the previous copy buffer
+            A                    - Turns on append mode and starts a second mark
+            CTRL-g               - Get information about current line and column
+
+Searching:  $ESC s              - Emacs style incremental search forward.
+            C-r                  - Emacs style reverse i-search.
+            /                    - Vi-like search forward (from scrollback buffer)
+            ?                    - Vi-like search backward (from scrollback buffer)
+
+EOF
