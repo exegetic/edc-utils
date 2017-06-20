@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errors or undefined variables
+
+
+##|====[  Usage docs  ]===============|
+
+do_help () {
+cat <<EOF
+Usage: $0 [--profile-directory=PROFILE_DIR_NAME] [ARGUMENTS]
+ 
+Launches Google Chrome. If the --profile-directory option is not specified, it 
+will default to the following, in order:
+
+- \$GOOGLE_CHROME_DEFAULT_PROFILE_DIRECTORY
+- "Default"
+EOF
+exit 2
+}
+
+
+##|====[  Arg parsing  ]==============|
+
+PROFILE_DIR="${GOOGLE_CHROME_DEFAULT_PROFILE_DIRECTORY:-Default}"
+PROFILE_ARG="--profile-directory=${PROFILE_DIR}"
+
+while getopts ":h-:" optchar; do
+  case "${optchar}" in
+    -)
+      case "${OPTARG}" in
+        help)
+          do_help
+          ;;
+        profile-directory=*)
+          PROFILE_ARG=""
+          ;;
+      esac;;
+    h)
+      do_help
+      ;;
+  esac
+done
+
+
+##|====[  Main  ]=====================|
+
+##|  Chrome seems to prefer the last --profile-directory arg, so we place $PROFILE_ARG first in
+ #|  case we missed it during getopts processing. This may actually make the getops processing
+ #|  in this script moot, but we're still doing it for now until we've verified this behavior on
+ #|  OS X & Windows.
+ ##
+if [[ $(uname) == 'Darwin' ]] ; then
+  "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome" "${PROFILE_ARG}" "${@}"
+else
+  google-chrome "${PROFILE_ARG}" "${@}"
+fi
+
+exit 0
