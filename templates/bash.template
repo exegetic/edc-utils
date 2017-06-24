@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
+
+##|  {{{Script name}}}
+ #|  {{{Brief summary of script purpose}}} 
+ #|  See Documentation section for details.
+ #|  
+ #|  {{{author_name}}} <{{{email_address}}}>
+ #|  {{{Date}}}
+ ##
+
+
+##====|  Global variables  |=================================================##
+
+script_name=$(basename "${BASH_SOURCE[0]}")
+
+
+##====|  Documentation  |====================================================##
+
+print_usage() {
+cat <<EOF
+Usage: ${script_name} [ARGS]
+ #|  {{{$USER}}} <email address>}}}
+
+{{{Further documentation...}}}
+EOF
+}
+
+
+##====|  Functions  |========================================================##
+
+##|  Check args.
+ #|  Exit on failure.
+ ##
+init_script() {
+  if [ $# -lt 1 ]; then
+    print_usage
+    exit 1
+  fi
+}
+
+##|  Main function
+ ##
+main() {
+  init_script
+  echo Running...
+}
+
+
+##====|  Execute  |==========================================================##
+
+main
+
+exit 0
