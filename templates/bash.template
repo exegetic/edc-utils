@@ -1,54 +1,53 @@
 #!/usr/bin/env bash
 set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
 
-##|  {{{Script name}}}
- #|  {{{Brief summary of script purpose}}} 
- #|  See Documentation section for details.
- #|  
- #|  {{{author_name}}} <{{{email_address}}}>
- #|  {{{Date}}}
- ##
+###|  {{{script_name}}} [ARGS]
+ ##:  Updated: 
+ ##:  - {{{date}}} by {{{author_name}}} <{{{email_address}}}>
+ ##|  
+ ##|  {{{Further documentation...}}}
+ ###
 
 
 ##====|  Global variables  |=================================================##
 
-script_name=$(basename "${BASH_SOURCE[0]}")
-
-
-##====|  Documentation  |====================================================##
-
-print_usage() {
-cat <<EOF
-Usage: ${script_name} [ARGS]
- #|  {{{$USER}}} <email address>}}}
-
-{{{Further documentation...}}}
-EOF
-}
+declare -r script_name=$(basename "${BASH_SOURCE[0]}")
 
 
 ##====|  Functions  |========================================================##
 
-##|  Check args.
- #|  Exit on failure.
- ##
-init_script() {
-  if [ $# -lt 1 ]; then
-    print_usage
-    exit 1
-  fi
+echo_err() {
+  echo "ERROR: $@" >&2
 }
 
-##|  Main function
- ##
-main() {
-  init_script
-  echo Running...
+print_usage() {
+  local -r doc_line="^[# ]##|  "
+  cat "${script_name}" | grep -e "${doc_line}" \
+      | sed -e "s/${doc_line}//g" -e "s/{{{script_name}}}/"${script_name}"/g"
 }
 
 
-##====|  Execute  |==========================================================##
+##====|  Initialize  |=======================================================##
 
-main
+while getopts ":h-:" optchar; do
+  case "${optchar}" in
+    -) case "${OPTARG}" in
+         help) print_usage                           ; exit 0 ;;
+         *)    echo_err "Unknown option --${OPTARG}" ; exit 1 ;;
+       esac;;
+    h) print_usage                                   ; exit 0 ;;
+    *) echo_err "Unknown option -${OPTARG}"          ; exit 1 ;;
+  esac
+done
+
+if [[ $# -lt 1 ]]; then
+  print_usage
+  exit 1
+fi
+
+
+##====|  Run  |==============================================================##
+
+echo "Running ${script_name}..."
 
 exit 0
