@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
+
+###|  Usage: {{{script_name}}} [OPTION]... TEMPLATE_NAME 
+ ##:  
+ ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
+ ##|  
+ ##|  Creates the contents for a file from a template and pipes it to STDOUT.
+ ##|  
+ ##|  Example:
+ ##|  
+ ##|    {{{script_name}}} bash > newscript.sh
+ ##|  
+ ##|  Options:
+ ##|    -h, --help                 display this help and exit
+ ##|    -l, --list                 list all available templates
+ ##|  
+ ###
+
+##----|    Globals    |------------------------------------------------------##
+
+declare -r SCRIPT_PATH="${BASH_SOURCE[0]}"
+declare -r SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
+
+##|  Exported variables
+#declare -g var
+
+##----|    Functions    |----------------------------------------------------##
+
+echo_err() {  echo "${SCRIPT_PATH}: $@" >&2 ; }
+
+print_usage() {
+  local -r doc_prefix="^[# ]##|  "
+  cat "${SCRIPT_PATH}"             \
+      | grep -e "${doc_prefix}"    \
+      | sed -e "s/${doc_prefix}//g" -e "s/{{{script_name}}}/${SCRIPT_NAME}/g"
+}
+
+validate_args() {
+  local -r num_args=1
+  if (( $# != ${num_args} )) ; then
+    echo_err "Requires exactly ${num_args} argument. Re-run with -h flag for usage docs."
+    exit 1
+  fi
+}
+
+process_args() {
+  while getopts ":hl-:" optchar; do
+    case "${optchar}" in
+      -) case "${OPTARG:-}" in
+           help) print_usage                              ; exit 0 ;;
+           list) list_templates                           ; exit 0 ;;
+              *) echo_err "Illegal option: --${OPTARG:-}" ; exit 1 ;;
+         esac;;
+      h) print_usage                                      ; exit 0 ;;
+      l) list_templates                                   ; exit 0 ;;
+      *) echo_err "Illegal option: -${OPTARG:-}"          ; exit 1 ;;
+    esac
+  done
+  shift $((OPTIND-1))
+  validate_args "$@"
+  template_name="${1:-}"
+}
+
+list_templates() {
+  echo "Templates in ${template_dir}:"
+  echo
+  ls -1 "${template_dir}" | grep ".template\$" \
+      | sort -V | sed -e 's/.template$//g'
+}
+
+create_output() {
+  local -r author_name="${USER}___"
+  local -r email_address="foo@bar___"
+  local -r date="$(date '+%Y-%m-%d')"
+  local -r time="$(date '+%H:%M:%S')"
+  local -r timestamp="$(date '+%Y%m%d-%H%M%S')"
+  local -r weekday_name="$(date '+%A')"
+  cat "${template_dir}/${template_name}.template"          \
+      | sed -e s/{{{author_name}}}/"${author_name}"/g      \
+      | sed -e s/{{{email_address}}}/"${email_address}"/g  \
+      | sed -e s/{{{date}}}/"${date}"/g                    \
+      | sed -e s/{{{time}}}/"${time}"/g                    \
+      | sed -e s/{{{weekday_name}}/"${weekday_name}"/g     \
+      | sed -e s/{{{timestamp}}}/"${timestamp}"/g
+ ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
+}
+
+main() {
+  ## Vars:
+  local -r template_dir="${HOME}/.scripts/templates"   ## TODO: derive from $edc_home
+
+  ## Args:
+  local mode="default"
+  local template_name
+  process_args "$@"
+
+  ## Run:
+  case "${mode}" in
+    list) list_templates ;;
+       *) create_output  ;;
+  esac
+}
+
+main "$@" && exit 0
+
+

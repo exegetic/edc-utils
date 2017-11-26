@@ -1,53 +1,67 @@
 #!/usr/bin/env bash
 set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
 
-###|  {{{script_name}}} [ARGS]
- ##:  Updated: 
- ##:  - {{{date}}} by {{{author_name}}} <{{{email_address}}}>
+###|  Usage: {{{script_name}}} [OPTION]... ARGUMENT
+ ##|  ____Brief description...____
+ ##:  
+ ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
+ ##:  Version {{{}}}, {{{date}}}
  ##|  
- ##|  {{{Further documentation...}}}
+ ##|  Example:
+ ##|    {{{script_name}}} ____Some set of options & args...____
+ ##|  
+ ##|  Options:
+ ##|    -h, --help                 display this help and exit
+ ##|  
+ ##|  ____Further documentation...____
  ###
 
+##----|    Globals    |------------------------------------------------------##
 
-##====|  Global variables  |=================================================##
+declare -r SCRIPT_PATH="${BASH_SOURCE[0]}"
+declare -r SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
 
-declare -r script_name=$(basename "${BASH_SOURCE[0]}")
+##|  Variables
+#declare var
 
+##|  Exported variables
+#declare -g var
 
-##====|  Functions  |========================================================##
-
-echo_err() {
-  echo "ERROR: $@" >&2
-}
+##----|    Functions    |----------------------------------------------------##
 
 print_usage() {
-  local -r doc_line="^[# ]##|  "
-  cat "${script_name}" | grep -e "${doc_line}" \
-      | sed -e "s/${doc_line}//g" -e "s/{{{script_name}}}/"${script_name}"/g"
+  local -r doc_prefix="^[# ]##|  "
+  cat "${SCRIPT_PATH}"             \
+      | grep -e "${doc_prefix}"    \
+      | sed -e "s/${doc_prefix}//g" -e "s/{{{script_name}}}/${SCRIPT_NAME}/g"
 }
 
+echo_err() {  echo "${SCRIPT_PATH}: $@" >&2 ; }
 
-##====|  Initialize  |=======================================================##
+##----|    Initialize    |---------------------------------------------------##
 
+##|  Process options
 while getopts ":h-:" optchar; do
   case "${optchar}" in
-    -) case "${OPTARG}" in
-         help) print_usage                           ; exit 0 ;;
-         *)    echo_err "Unknown option --${OPTARG}" ; exit 1 ;;
+    -) case "${OPTARG:-}" in
+         help) print_usage                              ; exit 0 ;;
+            *) echo_err "Illegal option: --${OPTARG:-}" ; exit 1 ;;
        esac;;
-    h) print_usage                                   ; exit 0 ;;
-    *) echo_err "Unknown option -${OPTARG}"          ; exit 1 ;;
+    h) print_usage                                      ; exit 0 ;;
+    *) echo_err "Illegal option: -${OPTARG:-}"          ; exit 1 ;;
   esac
 done
+shift $((OPTIND-1))
 
-if [[ $# -lt 1 ]]; then
-  print_usage
+##|  Validate args
+if (( $# < 1 )) ; then
+  echo_err "Requires at least 1 argument."
   exit 1
 fi
 
+##----|    Run    |----------------------------------------------------------##
 
-##====|  Run  |==============================================================##
-
-echo "Running ${script_name}..."
+echo "Running: ${SCRIPT_NAME} ${@}"
 
 exit 0
+
