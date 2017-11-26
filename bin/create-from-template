@@ -3,7 +3,7 @@ set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
 
 ###|  Usage: {{{script_name}}} [OPTION]... TEMPLATE_NAME 
  ##:  
- ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
+ ##:  By Nathan Winant <nw@exegetic.net> 2017-11-26
  ##|  
  ##|  Creates the contents for a file from a template and pipes it to STDOUT.
  ##|  Searches for templates in ${templates_home}.
@@ -42,18 +42,6 @@ set_list_mode() {
   required_num_args=0
 }
 
-validate_args() {
-  local -r num_args=1
-  if (( $# != ${required_num_args} )) ; then
-    echo_err "Requires exactly ${num_args} argument. Re-run with -h flag for usage docs."
-    exit 1
-  fi
-  if [[ -z ${templates_home+x} ]] ; then
-    echo_err "Variable \$templates_home is not set"
-    exit 1
-  fi
-}
-
 process_args() {
   while getopts ":hl-:" optchar; do
     case "${optchar}" in
@@ -68,15 +56,26 @@ process_args() {
     esac
   done
   shift $((OPTIND-1))
-  validate_args "$@"
+  if (( $# != ${required_num_args} )) ; then
+    echo_err "Requires exactly ${required_num_args} argument. Re-run with -h flag for usage docs."
+    exit 1
+  elif [[ -z ${templates_home+x} ]] ; then
+    echo_err "Variable \$templates_home is not set"
+    exit 1
+  fi
   template_name="${1:-}"
 }
 
 list_templates() {
+  if [[ "$(uname)" == "Darwin" ]] ; then
+    local -r sort_flags="-u"    ##|  -V doesn't seem to be supported in OSX:
+  else
+    local -r sort_flags="-V"
+  fi
   echo "Templates in ${templates_home}:"
   echo
   ls -1 "${templates_home}" | grep ".template\$" \
-      | sort -V | sed -e 's/.template$//g'
+      | sort "$sort_flags" | sed -e 's/.template$//g'
 }
 
 create_output() {
@@ -97,13 +96,10 @@ create_output() {
 }
 
 main() {
-  ## Args:
   local required_num_args=1
   local mode="default"
   local template_name
   process_args "$@"
-
-  ## Run:
   case "${mode}" in
     list) list_templates ;;
        *) create_output  ;;
@@ -111,5 +107,4 @@ main() {
 }
 
 main "$@" && exit 0
-
 
