@@ -6,6 +6,7 @@ set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
  ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
  ##|  
  ##|  Creates the contents for a file from a template and pipes it to STDOUT.
+ ##|  Searches for templates in ${templates_home}.
  ##|  
  ##|  Example:
  ##|  
@@ -36,10 +37,19 @@ print_usage() {
       | sed -e "s/${doc_prefix}//g" -e "s/{{{script_name}}}/${SCRIPT_NAME}/g"
 }
 
+set_list_mode() {
+  mode="list"
+  required_num_args=0
+}
+
 validate_args() {
   local -r num_args=1
-  if (( $# != ${num_args} )) ; then
+  if (( $# != ${required_num_args} )) ; then
     echo_err "Requires exactly ${num_args} argument. Re-run with -h flag for usage docs."
+    exit 1
+  fi
+  if [[ -z ${templates_home+x} ]] ; then
+    echo_err "Variable \$templates_home is not set"
     exit 1
   fi
 }
@@ -49,11 +59,11 @@ process_args() {
     case "${optchar}" in
       -) case "${OPTARG:-}" in
            help) print_usage                              ; exit 0 ;;
-           list) list_templates                           ; exit 0 ;;
+           list) set_list_mode                                     ;;
               *) echo_err "Illegal option: --${OPTARG:-}" ; exit 1 ;;
          esac;;
       h) print_usage                                      ; exit 0 ;;
-      l) list_templates                                   ; exit 0 ;;
+      l) set_list_mode                                             ;;
       *) echo_err "Illegal option: -${OPTARG:-}"          ; exit 1 ;;
     esac
   done
@@ -63,9 +73,9 @@ process_args() {
 }
 
 list_templates() {
-  echo "Templates in ${template_dir}:"
+  echo "Templates in ${templates_home}:"
   echo
-  ls -1 "${template_dir}" | grep ".template\$" \
+  ls -1 "${templates_home}" | grep ".template\$" \
       | sort -V | sed -e 's/.template$//g'
 }
 
@@ -76,7 +86,7 @@ create_output() {
   local -r time="$(date '+%H:%M:%S')"
   local -r timestamp="$(date '+%Y%m%d-%H%M%S')"
   local -r weekday_name="$(date '+%A')"
-  cat "${template_dir}/${template_name}.template"          \
+  cat "${templates_home}/${template_name}.template"          \
       | sed -e s/{{{author_name}}}/"${author_name}"/g      \
       | sed -e s/{{{email_address}}}/"${email_address}"/g  \
       | sed -e s/{{{date}}}/"${date}"/g                    \
@@ -87,10 +97,8 @@ create_output() {
 }
 
 main() {
-  ## Vars:
-  local -r template_dir="${HOME}/.scripts/templates"   ## TODO: derive from $edc_home
-
   ## Args:
+  local required_num_args=1
   local mode="default"
   local template_name
   process_args "$@"
