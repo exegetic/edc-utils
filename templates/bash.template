@@ -16,19 +16,20 @@ set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
  ##|  ____Further documentation...____
  ###
 
-##----|    Globals    |------------------------------------------------------##
+##====|    Globals    |======================================================##
 
 declare -r SCRIPT_PATH="${BASH_SOURCE[0]}"
 declare -r SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
 
-##|  Variables
-#declare var
-
 ##|  Exported variables
 #declare -g var
 
-##----|    Functions    |----------------------------------------------------##
+##====|    Functions    |====================================================##
 
+##|  Echos arg(s) to STDERR.
+echo_err() {  echo "${SCRIPT_PATH}: $@" >&2 ; }
+
+##|  Prints usage docs. No args.
 print_usage() {
   local -r doc_prefix="^[# ]##|  "
   cat "${SCRIPT_PATH}"             \
@@ -36,32 +37,59 @@ print_usage() {
       | sed -e "s/${doc_prefix}//g" -e "s/{{{script_name}}}/${SCRIPT_NAME}/g"
 }
 
-echo_err() {  echo "${SCRIPT_PATH}: $@" >&2 ; }
+##|  Sets to "list" mode. No args.
+#set_list_mode() {
+#  mode="list"
+#  required_num_args=0
+#}
 
-##----|    Initialize    |---------------------------------------------------##
+##|  Processes opts & args, and populate local variables from them.
+ #|  Args: expects $@
+process_args() {
+  while getopts ":hl-:" optchar; do
+    case "${optchar}" in
+      -) case "${OPTARG:-}" in
+           help) print_usage                              ; exit 0 ;;
+#           list) set_list_mode                                     ;;
+              *) echo_err "Illegal option: --${OPTARG:-}" ; exit 1 ;;
+         esac;;
+      h) print_usage                                      ; exit 0 ;;
+#      l) set_list_mode                                             ;;
+      *) echo_err "Illegal option: -${OPTARG:-}"          ; exit 1 ;;
+    esac
+  done
+  shift $((OPTIND-1))
+  if [[ $# -ne ${required_num_args} ]] ; then
+    echo_err "Requires exactly ${required_num_args} argument. Re-run with -h flag for usage docs."
+    exit 1
+  fi
+#  if (( $# < ${min_num_args} )) ; then
+#    echo_err "Requires at least ${min_num_args} arguments. Re-run with -h flag for usage docs."
+#    exit 1
+#  elif (( $# > ${max_num_args} )) ; then
+#    echo_err "Requires a max of ${max_num_args} arguments. Re-run with -h flag for usage docs."
+#    exit 1
+#  fi
+#  some_var="${1:-}"
+}
 
-##|  Process options
-while getopts ":h-:" optchar; do
-  case "${optchar}" in
-    -) case "${OPTARG:-}" in
-         help) print_usage                              ; exit 0 ;;
-            *) echo_err "Illegal option: --${OPTARG:-}" ; exit 1 ;;
-       esac;;
-    h) print_usage                                      ; exit 0 ;;
-    *) echo_err "Illegal option: -${OPTARG:-}"          ; exit 1 ;;
+##====|    Main    |=========================================================##
+
+##|  Declares common local vars and delegates processing to other functions.
+ #|  Args: expects $@
+main() {
+  local mode="default"
+  local required_num_args=1
+#  local min_num_args=1
+#  local max_num_args=3
+#  local some_var
+  process_args "$@"
+  case "${mode}" in
+#    list) list_things       ;;
+#       *) do_default_thing  ;;
   esac
-done
-shift $((OPTIND-1))
+}
 
-##|  Validate args
-if (( $# < 1 )) ; then
-  echo_err "Requires at least 1 argument."
-  exit 1
-fi
-
-##----|    Run    |----------------------------------------------------------##
-
-echo "Running: ${SCRIPT_NAME} ${@}"
-
-exit 0
+##|  Run...
+main "$@" && exit 0
 

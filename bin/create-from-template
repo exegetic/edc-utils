@@ -18,18 +18,17 @@ set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
  ##|  
  ###
 
-##----|    Globals    |------------------------------------------------------##
+##====|    Globals    |======================================================##
 
 declare -r SCRIPT_PATH="${BASH_SOURCE[0]}"
 declare -r SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
 
-##|  Exported variables
-#declare -g var
+##====|    Functions    |====================================================##
 
-##----|    Functions    |----------------------------------------------------##
-
+##|  Echos arg(s) to STDERR.
 echo_err() {  echo "${SCRIPT_PATH}: $@" >&2 ; }
 
+##|  Prints usage docs. No args.
 print_usage() {
   local -r doc_prefix="^[# ]##|  "
   cat "${SCRIPT_PATH}"             \
@@ -37,11 +36,14 @@ print_usage() {
       | sed -e "s/${doc_prefix}//g" -e "s/{{{script_name}}}/${SCRIPT_NAME}/g"
 }
 
+##|  Sets to "list" mode. No args.
 set_list_mode() {
   mode="list"
   required_num_args=0
 }
 
+##|  Processes opts & args, and populate local variables from them.
+ #|  Args: expects $@
 process_args() {
   while getopts ":hl-:" optchar; do
     case "${optchar}" in
@@ -56,7 +58,7 @@ process_args() {
     esac
   done
   shift $((OPTIND-1))
-  if (( $# != ${required_num_args} )) ; then
+  if [[ $# -ne ${required_num_args} ]] ; then
     echo_err "Requires exactly ${required_num_args} argument. Re-run with -h flag for usage docs."
     exit 1
   elif [[ -z ${templates_home+x} ]] ; then
@@ -66,19 +68,20 @@ process_args() {
   template_name="${1:-}"
 }
 
+##|  Lists all available templates. No args, but requires $templates_home.
 list_templates() {
   if [[ "$(uname)" == "Darwin" ]] ; then
-    local -r sort_flags="-u"    ##|  -V doesn't seem to be supported in OSX:
+    local -r sort_flags="-u"    ##|  -V doesn't seem to be supported in OSX
   else
     local -r sort_flags="-V"
   fi
-  echo "Templates in ${templates_home}:"
-  echo
   ls -1 "${templates_home}" | grep ".template\$" \
       | sort "$sort_flags" | sed -e 's/.template$//g'
 }
 
-create_output() {
+##|  Processes a template and returns the result to STDOUT.
+ #|  Args: none, but requires $templates_home, $template_name.
+process_template() {
   local -r author_name="${USER}___"
   local -r email_address="foo@bar___"
   local -r date="$(date '+%Y-%m-%d')"
@@ -95,16 +98,21 @@ create_output() {
  ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
 }
 
+##====|    Main    |=========================================================##
+
+##|  Declares common local vars and delegates processing to other functions.
+ #|  Args: expects $@
 main() {
-  local required_num_args=1
   local mode="default"
+  local required_num_args=1
   local template_name
   process_args "$@"
   case "${mode}" in
-    list) list_templates ;;
-       *) create_output  ;;
+    list) list_templates   ;;
+       *) process_template ;;
   esac
 }
 
+##|  Run:
 main "$@" && exit 0
 

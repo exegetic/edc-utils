@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail    ## "strict mode": exit on command errs or undefined vars
+
+###|  Usage: {{{script_name}}} [OPTION]... ARGUMENT
+ ##|  ____Brief description...____
+ ##:  
+ ##:  By {{{author_name}}} <{{{email_address}}}>, {{{date}}}
+ ##:  Version {{{}}}, {{{date}}}
+ ##|  
+ ##|  Example:
+ ##|    {{{script_name}}} ____Some set of options & args...____
+ ##|  
+ ##|  Options:
+ ##|    -h, --help                 display this help and exit
+ ##|  
+ ##|  ____Further documentation...____
+ ###
+
+##|  Global variables
+declare -r SCRIPT_PATH="${BASH_SOURCE[0]}"
+declare -r SCRIPT_NAME=$(basename "${BASH_SOURCE[0]}")
+#declare -g var
+
+##|  Echos arg(s) to STDERR.
+echo_err() {  echo "${SCRIPT_PATH}: $@" >&2 ; }
+
+##|  Prints usage docs. No args.
+print_usage() {
+  local -r doc_prefix="^[# ]##|  "
+  cat "${SCRIPT_PATH}"             \
+      | grep -e "${doc_prefix}"    \
+      | sed -e "s/${doc_prefix}//g" -e "s/{{{script_name}}}/${SCRIPT_NAME}/g"
+}
+
+##|  Possibly print usage & quit. Args: expects $@
+process_args() {
+  while getopts ":h-:" optchar; do
+    case "${optchar}" in
+      -) case "${OPTARG:-}" in
+           help) print_usage                              ; exit 0 ;;
+              *) echo_err "Illegal option: --${OPTARG:-}" ; exit 1 ;;
+         esac;;
+      h) print_usage                                      ; exit 0 ;;
+      *) echo_err "Illegal option: -${OPTARG:-}"          ; exit 1 ;;
+    esac
+  done
+  if (( $# > 0 )) ; then
+    echo_err "Does not take any arguments. Re-run with -h flag for usage docs."
+    exit 1
+  fi
+}
+
+##|  Main function. Args: expects $@
+main() {
+  process_args "$@"
+  # Do something...
+}
+
+##|  Run...
+main "$@" && exit 0
+
