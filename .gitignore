@@ -1,6 +1,6 @@
 ##  Local override dirs
 /local
-scripts/local
+bin/local
 
 ##  Backup files
 .*.swp
