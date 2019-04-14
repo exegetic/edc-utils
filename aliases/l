@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#ls -CF --color=auto $*
+ls -C --color=auto $*
+

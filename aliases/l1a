@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#ls -1A --color=auto $*
+l -1A $*
+

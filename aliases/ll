@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#ls -lF --color=auto $*
+l -l $*
+
