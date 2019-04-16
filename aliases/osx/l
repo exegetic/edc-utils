@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail    # "strict mode": exit on command errors or undefined variables
+
+##|  BSD ls does not like the --color option; instead, export CLICOLOR=1
+ls -C $*
+

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail    # "strict mode": exit on command errors or undefined variables
+
+##|  BSD ls does not like the --time-style option
+#declare format="%Y%m%d-%H:%M:%S"
+l -l $*
+
