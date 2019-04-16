@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail    # "strict mode": exit on command errors or undefined variables
 
-# http://www.virtuouscode.com/2011/10/27/running-emacs-as-a-server-emacs-reboot-15/
-# http://mjwall.com/blog/2013/10/04/how-i-use-emacs/
+##|  http://www.virtuouscode.com/2011/10/27/running-emacs-as-a-server-emacs-reboot-15/
+##|  http://mjwall.com/blog/2013/10/04/how-i-use-emacs/
 
 exec /usr/bin/env emacsclient -c -a "" $*
 

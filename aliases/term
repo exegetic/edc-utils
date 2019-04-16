@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail    # "strict mode": exit on command errors or undefined variables
 
-## NOTE: urxvtd must have been started via .xsessionrc (or similar)
+##|  NOTE: urxvtd must have been started via .xsessionrc (or similar)
 
 urxvtc "$@"
-
 

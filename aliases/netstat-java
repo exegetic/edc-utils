@@ -3,4 +3,3 @@ set -euo pipefail    # "strict mode": exit on command errors or undefined variab
 
 netstat -plen | grep java
 
-
