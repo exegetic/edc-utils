@@ -6,3 +6,6 @@ bin/local
 .*.swp
 *~
 
+##  Misc cruft
+.DS_Store
+
