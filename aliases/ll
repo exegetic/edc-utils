@@ -2,5 +2,5 @@
 set -euo pipefail    # "strict mode": exit on command errors or undefined variables
 
 declare format="%Y%m%d-%H:%M:%S"
-l -l --time-style=+"${format}" $*
+l -lh --time-style=+"${format}" $*
 
