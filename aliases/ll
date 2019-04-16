@@ -1,5 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail    # "strict mode": exit on command errors or undefined variables
+
+declare format="%Y%m%d-%H:%M:%S"
 
 #ls -lF --color=auto $*
-l -l $*
+l -l --time-style=+"${format}" $*
 
