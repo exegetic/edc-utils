@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail    # "strict mode": exit on command errors or undefined variables
 
-#ls -1F --color=auto $*
 ls -1 --color=auto $*
 
